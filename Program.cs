@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace sloth
 {
@@ -49,7 +50,14 @@ namespace sloth
 
     private static void processScriptFile(string scriptFileContent)
     {
-      string[] lines = scriptFileContent.Split(new string[] {"\n", "\r", "\r\n"}, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+      // remove comments /* ... */
+      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\*.+?\*\/", "", RegexOptions.Singleline);
+      // remove comments //
+      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\/.+?$", "", RegexOptions.Multiline);
+      // remove line breaks
+      scriptFileContent = Regex.Replace(scriptFileContent, @"[\r\n]", "");
+
+      string[] lines = scriptFileContent.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
       foreach (string line in lines)
       {
 
