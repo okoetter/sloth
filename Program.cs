@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -103,10 +103,10 @@ namespace sloth
       string[] lines = scriptFileContent.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
       foreach (string line in lines)
       {
-        var parts = Regex.Matches(line, @"([a-z]+)\s*\(\s*(.+)\s*\)", RegexOptions.IgnoreCase);
-        var command = parts[0].Groups[1].ToString();
-        var parameterString = parts[0].Groups[2].ToString();
-        var parameters = SplitArgumentsByComma(parameterString);
+        var parts = Regex.Matches(line, @"(?<function>[a-z]+)\s*\(\s*(?<arguments>.+)\s*\)", RegexOptions.IgnoreCase);
+        var command = parts[0].Groups["function"].ToString();
+        var parameterString = parts[0].Groups["arguments"].ToString();
+        var parameters = SplitArguments(parameterString);
 
         //SloCommand command = new SloCommand();
       }
