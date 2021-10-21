@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -7,6 +7,10 @@ namespace sloth
 {
   class Program
   {
+    /// <summary>
+    /// main entry point of app
+    /// </summary>
+    /// <param name="args">arguments for sloth</param>
     static void Main(string[] args)
     {
       const string __version = "0.0.1";
@@ -31,6 +35,12 @@ namespace sloth
       var scriptFileContent = readScriptFileContent(scriptFilename);
       processScriptFile(scriptFileContent);
     }
+
+    /// <summary>
+    /// reads the whole script file into one giant string
+    /// </summary>
+    /// <param name="scriptFilename">full path to script file to read</param>
+    /// <returns>string containing the script file</returns>
     private static string readScriptFileContent(string scriptFilename)
     {
       var scriptContent = "";
@@ -49,6 +59,11 @@ namespace sloth
       return scriptContent;
     }
 
+    /// <summary>
+    /// splits comma separated argument list into array while ignoring commas in strings or arrays
+    /// </summary>
+    /// <param name="input">comma separated argument list</param>
+    /// <returns>array of arguments</returns>
     private static string[] SplitByCommaExceptInStrings(string input)
     {
       List<string> result = new List<string>();
@@ -69,6 +84,10 @@ namespace sloth
       return result.ToArray();
     }
 
+    /// <summary>
+    /// processes slo script string 
+    /// </summary>
+    /// <param name="scriptFileContent">slo script string</param>
     private static void processScriptFile(string scriptFileContent)
     {
       // remove comments /* ... */
