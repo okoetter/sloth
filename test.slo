@@ -1,0 +1,9 @@
+Load("h:\Healthcare Bus\_2021\Ärzte\8_August_2021\SO-210803-0213 AstraZeneca - HCP Bus 08_2021\Feldbetreuung\i_survey_Einladungen.xlsx", "xlsx");
+/* Dies ist
+ein Kommentar, der über
+mehrere Zeilen geht.
+*/
+SetHeader(1, "userid"); // Kommentar am Ende
+// einzeiliger Kommentar
+/* noch ein Kommentar */
+Save("h:\Healthcare Bus\_2021\Ärzte\8_August_2021\SO-210803-0213 AstraZeneca - HCP Bus 08_2021\Feldbetreuung\i_survey_Einladungen.txt", "\t");

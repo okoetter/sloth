@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -48,6 +49,26 @@ namespace sloth
       return scriptContent;
     }
 
+    private static string[] SplitByCommaExceptInStrings(string input)
+    {
+      List<string> result = new List<string>();
+      bool withinString = false;
+      int startIndex = 0;
+      for(int i = startIndex; i < input.Length; i++) {
+        var c = input[i];
+        if(c=='x')
+          System.Console.WriteLine("x");
+        if (c == '"') withinString = !withinString;
+        if ((c == ',' && !withinString) || i >= input.Length - 1) {
+          if( (c == ',' && !withinString)) result.Add(input.Substring(startIndex, i - startIndex).Trim());
+          else result.Add(input.Substring(startIndex, i - (startIndex - 1)).Trim());
+          startIndex = i + 1;
+        }
+      }
+
+      return result.ToArray();
+    }
+
     private static void processScriptFile(string scriptFileContent)
     {
       // remove comments /* ... */
@@ -57,10 +78,16 @@ namespace sloth
       // remove line breaks
       scriptFileContent = Regex.Replace(scriptFileContent, @"[\r\n]", "");
 
+      SloScript script = new SloScript();
       string[] lines = scriptFileContent.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
       foreach (string line in lines)
       {
+        var parts = Regex.Matches(line, @"([a-z]+)\s*\(\s*(.+)\s*\)", RegexOptions.IgnoreCase);
+        var command = parts[0].Groups[1].ToString();
+        var parameterString = parts[0].Groups[2].ToString();
+        var parameters = SplitByCommaExceptInStrings(parameterString);
 
+        //SloCommand command = new SloCommand();
       }
     }
   }
