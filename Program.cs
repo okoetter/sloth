@@ -64,18 +64,20 @@ namespace sloth
     /// </summary>
     /// <param name="input">comma separated argument list</param>
     /// <returns>array of arguments</returns>
-    private static string[] SplitByCommaExceptInStrings(string input)
+    private static string[] SplitArguments(string input)
     {
       List<string> result = new List<string>();
       bool withinString = false;
+      bool withinArray = false;
       int startIndex = 0;
       for(int i = startIndex; i < input.Length; i++) {
         var c = input[i];
-        if(c=='x')
-          System.Console.WriteLine("x");
         if (c == '"') withinString = !withinString;
-        if ((c == ',' && !withinString) || i >= input.Length - 1) {
-          if( (c == ',' && !withinString)) result.Add(input.Substring(startIndex, i - startIndex).Trim());
+        else if (c == '[' && !withinString) withinArray = true;
+        else if (c == ']' && !withinString) withinArray = false;
+
+        if ((c == ',' && !withinString && !withinArray) || i >= input.Length - 1) {
+          if( (c == ',' && !withinString && !withinArray)) result.Add(input.Substring(startIndex, i - startIndex).Trim());
           else result.Add(input.Substring(startIndex, i - (startIndex - 1)).Trim());
           startIndex = i + 1;
         }
@@ -104,7 +106,7 @@ namespace sloth
         var parts = Regex.Matches(line, @"([a-z]+)\s*\(\s*(.+)\s*\)", RegexOptions.IgnoreCase);
         var command = parts[0].Groups[1].ToString();
         var parameterString = parts[0].Groups[2].ToString();
-        var parameters = SplitByCommaExceptInStrings(parameterString);
+        var parameters = SplitArgumentsByComma(parameterString);
 
         //SloCommand command = new SloCommand();
       }
