@@ -8,21 +8,20 @@ namespace sloth
 {
   public enum SloTypes { String, Array, Unknown }
 
-  public class SloScript
-  {
-    public List<SloCommand> commands = new List<SloCommand>();
-  }
+  public class SloScript: List<SloCommand> { }
 
   public class SloCommand
   {
-    public SloCommand(string command, string[] args)
-    {
-        (this.command, this.args) = (command, args);
-    }
-    public string command { get; }
-    public string[] args { get; }
-  }
+    public int LineNo { get; }
+    public string Command { get; }
+    public string[] Arguments { get; }
 
+    public SloCommand(int lineNo, string command, string[] args)
+    {
+      (this.LineNo, this.Command, this.Arguments) = (lineNo, command, args);
+    }
+  }
+  
   public static class SloCommands
   {
     /// <summary>

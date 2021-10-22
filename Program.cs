@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -33,7 +33,12 @@ namespace sloth
       }
 
       var scriptFileContent = readScriptFileContent(scriptFilename);
-      processScriptFile(scriptFileContent);
+      (SloScript script, List<string> errors) = processScriptFile(scriptFileContent);
+      if (errors.Count > 0)
+      {
+        errors.ForEach(e => Console.WriteLine(e));
+        Environment.Exit(1);
+      }
     }
 
     /// <summary>
@@ -87,29 +92,61 @@ namespace sloth
     }
 
     /// <summary>
-    /// processes slo script string 
+    /// processes slo script string and build SloScript object
     /// </summary>
     /// <param name="scriptFileContent">slo script string</param>
-    private static void processScriptFile(string scriptFileContent)
+    /// <returns>Tuple with Script and errors list containing any syntax errors</returns>
+    private static (SloScript, List<string> errors) processScriptFile(string scriptFileContent)
     {
-      // remove comments /* ... */
-      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\*.+?\*\/", string.Empty, RegexOptions.Singleline);
-      // remove comments //
-      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\/.+?$", string.Empty, RegexOptions.Multiline);
-      // remove line breaks
-      scriptFileContent = Regex.Replace(scriptFileContent, @"[\r\n]", string.Empty);
-
       SloScript script = new SloScript();
-      string[] lines = scriptFileContent.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-      foreach (string line in lines)
-      {
-        var parts = Regex.Matches(line, @"(?<function>[a-z]+)\s*\(\s*(?<arguments>.+)\s*\)", RegexOptions.IgnoreCase);
-        var command = parts[0].Groups["function"].ToString();
-        var parameterString = parts[0].Groups["arguments"].ToString();
-        var parameters = SplitArguments(parameterString);
+      List<string> errors = new List<string>();
+      string[] scriptLines = scriptFileContent.Split(new string[] { "\r", "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        //SloCommand command = new SloCommand();
+      bool isInMultiLineComment = false;
+      for (int lineNo = 0; lineNo < scriptLines.Length; lineNo++)
+      {
+        string scriptLine = scriptLines[lineNo];
+        
+        // remove comments /* ... */
+        scriptLine = Regex.Replace(scriptLine, @"\/\*.+?\*\/", string.Empty);
+        // remove comments //
+        scriptLine = Regex.Replace(scriptLine, @"\/\/.+?$", string.Empty);
+        // check if multi line comment starts
+        if (scriptLine.Contains("/*"))
+        {
+          isInMultiLineComment = true;
+          scriptLine = Regex.Replace(scriptLine, @"\/\*.*$", string.Empty);
+        }
+        // check if multi line comment ends
+        else if (scriptLine.Contains("*/"))
+        {
+          isInMultiLineComment = false;
+          scriptLine = Regex.Replace(scriptLine, @"^.*?\*\/", string.Empty);
+        }
+        // skip whole line if within multi line comment 
+        else if (isInMultiLineComment) continue;
+
+        // skip whole line if line is empty
+        if (scriptLine.Trim().Length == 0) continue;
+
+        // process line
+        string[] commands = scriptLine.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        foreach (string command in commands)
+        {
+          var parts = Regex.Matches(command, @"(?<function>[a-z]+)\s*\(\s*(?<arguments>.*)\s*\)", RegexOptions.IgnoreCase);
+          if (parts.Count == 0 || parts[0].Groups.Count != 3) {
+            errors.Add($"Syntax error in line {lineNo + 1}: '{command}'");
+            continue;
+          }
+          var function = parts[0].Groups["function"].ToString();
+          var parameterString = parts[0].Groups["arguments"].ToString();
+          var parameters = SplitArguments(parameterString);
+          var sloCommand = new SloCommand(lineNo + 1, function, parameters);
+          script.Add(sloCommand);
+        }
       }
+
+      return (script, errors);
     }  
   }
 }
