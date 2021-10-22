@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -16,7 +16,7 @@ namespace sloth
       const string __version = "0.0.1";
 
       Console.WriteLine($"Sloth {__version}");
-      Console.WriteLine("by Oliver Kötter, oliver.koetter@interrogare.de");
+      Console.WriteLine("by Oliver Kötter, oliver@koetter.cc");
       Console.WriteLine();
       var scriptFilename = "";
       if (args.Length == 0) {
