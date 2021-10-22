@@ -6,7 +6,7 @@ using System.IO;
 
 namespace sloth
 {
-  public enum sloTypes { String, Array, Unknown }
+  public enum SloTypes { String, Array, Unknown }
 
   public class SloScript
   {
@@ -34,24 +34,24 @@ namespace sloth
       List<string> errors = new List<string>();
 
       // build argument types
-      List<sloTypes> types = new List<sloTypes>();
+      List<SloTypes> types = new List<SloTypes>();
       foreach(string arg in args)
       {
         int quoteCount = arg.Count(c => c == '"');
         int squareBracketOpenCount = arg.Count(c => c == '[');
         int squareBracketCloseCount = arg.Count(c => c == ']');
 
-        if(Regex.IsMatch(arg, @"^\s*""") && Regex.IsMatch(arg, @"\s""*$") && quoteCount == 2) types.Add(sloTypes.String);
-        else if(Regex.IsMatch(arg, @"^\s*\[") && Regex.IsMatch(arg, @"\]\s*$") && squareBracketOpenCount == 1 && squareBracketCloseCount == 1) types.Add(sloTypes.Array);
-        else types.Add(sloTypes.Unknown);
+        if(Regex.IsMatch(arg, @"^\s*""") && Regex.IsMatch(arg, @"\s""*$") && quoteCount == 2) types.Add(SloTypes.String);
+        else if(Regex.IsMatch(arg, @"^\s*\[") && Regex.IsMatch(arg, @"\]\s*$") && squareBracketOpenCount == 1 && squareBracketCloseCount == 1) types.Add(SloTypes.Array);
+        else types.Add(SloTypes.Unknown);
       }
 
       switch(command.ToLower()) {
         case "load":
           if(args.Length != 2) errors.Add("Two arguments expected for Load() in line ");
-          if(types[0] != sloTypes.String) errors.Add("First argument of Load() must be of type string in line ");
-          if(types[1] != sloTypes.String) errors.Add("Second argument of Load() must be of type string in line ");
-          if(types[0] == sloTypes.String && !File.Exists(args[0])) errors.Add("File not found in line ");
+          if(types[0] != SloTypes.String) errors.Add("First argument of Load() must be of type string in line ");
+          if(types[1] != SloTypes.String) errors.Add("Second argument of Load() must be of type string in line ");
+          if(types[0] == SloTypes.String && !File.Exists(args[0])) errors.Add("File not found in line ");
           break;
       }
 
