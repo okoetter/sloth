@@ -93,11 +93,11 @@ namespace sloth
     private static void processScriptFile(string scriptFileContent)
     {
       // remove comments /* ... */
-      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\*.+?\*\/", "", RegexOptions.Singleline);
+      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\*.+?\*\/", string.Empty, RegexOptions.Singleline);
       // remove comments //
-      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\/.+?$", "", RegexOptions.Multiline);
+      scriptFileContent = Regex.Replace(scriptFileContent, @"\/\/.+?$", string.Empty, RegexOptions.Multiline);
       // remove line breaks
-      scriptFileContent = Regex.Replace(scriptFileContent, @"[\r\n]", "");
+      scriptFileContent = Regex.Replace(scriptFileContent, @"[\r\n]", string.Empty);
 
       SloScript script = new SloScript();
       string[] lines = scriptFileContent.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -110,6 +110,6 @@ namespace sloth
 
         //SloCommand command = new SloCommand();
       }
-    }
+    }  
   }
 }
