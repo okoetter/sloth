@@ -77,5 +77,26 @@ namespace sloth
 
       return errors;
     }
+  
+    static DataTable Load(string filename, string type)
+    {
+      if (type.ToLower() == "xlsx") {
+        using (var inputStream = File.Open(filename, FileMode.Open, FileAccess.Read))
+        {
+          try
+          {
+            var excelReader = ExcelReaderFactory.CreateOpenXmlReader(inputStream);
+            var result = excelReader.AsDataSet();
+            return result.Tables[0];
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine($"Could not read file {filename}: {ex.Message}");
+          }
+        }
+      }
+      
+      return new DataTable();
+    }
   }
 }
