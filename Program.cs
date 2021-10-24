@@ -69,7 +69,7 @@ namespace sloth
     /// </summary>
     /// <param name="input">comma separated argument list</param>
     /// <returns>array of arguments</returns>
-    private static string[] SplitArguments(string input)
+    private static string[] splitArguments(string input)
     {
       List<string> result = new List<string>();
       bool withinString = false;
@@ -140,7 +140,7 @@ namespace sloth
           }
           var function = parts[0].Groups["function"].ToString();
           var parameterString = parts[0].Groups["arguments"].ToString();
-          var parameters = SplitArguments(parameterString);
+          var parameters = splitArguments(parameterString);
           var sloCommand = new SloCommand(lineNo + 1, function, parameters);
           script.Add(sloCommand);
         }
