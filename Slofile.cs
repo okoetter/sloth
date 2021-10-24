@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.IO;
+using System.Data;
+using ExcelDataReader;
 
 namespace sloth
 {
